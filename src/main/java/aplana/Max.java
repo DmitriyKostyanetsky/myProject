@@ -14,9 +14,33 @@ public class Max {
     private int dimension;
 
     public Max() {
-        System.out.println("Enter array dimension : ");
-        dimension = scanner.nextInt();
-        array = new String[dimension];
+        boolean isCorrectValue = false;
+        while (!isCorrectValue) {
+            System.out.println("Enter array dimension : ");
+            isCorrectValue = checkCorrectValue();
+        }
+    }
+
+    /**
+     * Validation check
+     * @return true if input correct value(positive number), false if input incorrect value(other)
+     */
+    private boolean checkCorrectValue() {
+        if (scanner.hasNextInt()) {
+            dimension = scanner.nextInt();
+            if (dimension > 0) {
+                array = new String[dimension];
+                return true;
+            } else if (dimension == 0) {
+                System.out.println("Please input number over then zero");
+            } else {
+                System.out.println("Please input positive number");
+            }
+        } else {
+            System.out.println("Incorrect value. Please input positive number");
+            scanner.next();
+        }
+        return false;
     }
 
     /**
