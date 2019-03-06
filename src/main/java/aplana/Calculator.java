@@ -13,14 +13,30 @@ public class Calculator {
     private double second;
 
     /**
-     * Input values
+     * Write to value
      */
     private void inputNumbers() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter the first number");
-        first = scanner.nextDouble();
+        first = checkValidate(scanner);
         System.out.println("Enter the second number");
-        second = scanner.nextDouble();
+        second = checkValidate(scanner);
+    }
+
+    /**
+     * Validation check
+     * @param scanner input
+     * @return correct value entered
+     */
+    private double checkValidate(Scanner scanner) {
+        while (true) {
+            if (!scanner.hasNextDouble()) {
+                System.out.println("Please input positive or negative number");
+                scanner.next();
+            } else if (scanner.hasNextDouble() || scanner.nextDouble() < 0) {
+                return scanner.nextDouble();
+            }
+        }
     }
 
     /**
