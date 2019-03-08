@@ -10,7 +10,7 @@ import java.util.Arrays;
  */
 public class PresentBox implements Box {
 
-    private Sweet[] sweets = new Sweet[3];
+    private Sweet[] sweets = new Sweet[1];
 
     /**
      * Add sweet in box
@@ -18,18 +18,17 @@ public class PresentBox implements Box {
      */
     @Override
     public void add(Sweet sweet) {
-        boolean isSweetAdd = false;
         for (int i = 0; i < sweets.length; i++) {
-            if (sweets[i] == null) {
+            if (sweets[i] != null) {
+                if (sweets.length - 1 == i) {
+                    sweets = Arrays.copyOf(sweets, sweets.length + 1);
+                    sweets[sweets.length - 1] = sweet;
+                    break;
+                }
+            } else {
                 sweets[i] = sweet;
-                isSweetAdd = true;
                 break;
             }
-        }
-
-        if (!isSweetAdd) {
-            sweets = Arrays.copyOf(sweets, sweets.length + 1);
-            sweets[sweets.length - 1] = sweet;
         }
     }
 
@@ -53,9 +52,9 @@ public class PresentBox implements Box {
 
             Sweet[] temp = new Sweet[sweets.length - 1];
             int count = 0;
-            for (Sweet sweet : sweets) {
-                if (sweet != null) {
-                    temp[count++] = sweet;
+            for (int i = 0; i < sweets.length; i++) {
+                if (sweets[i] != sweets[index]) {
+                    temp[count++] = sweets[i];
                 }
             }
 
