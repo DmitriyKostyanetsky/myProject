@@ -10,7 +10,11 @@ import java.util.Arrays;
  */
 public class PresentBox implements Box {
 
-    private Sweet[] sweets = new Sweet[1];
+    private Sweet[] sweets;
+
+   /* public PresentBox() {
+        sweets = new Sweet[1];
+    }*/
 
     /**
      * Add sweet in box
@@ -18,6 +22,9 @@ public class PresentBox implements Box {
      */
     @Override
     public void add(Sweet sweet) {
+        if (sweets == null) {
+            sweets = new Sweet[1];
+        }
         for (int i = 0; i < sweets.length; i++) {
             if (sweets[i] != null) {
                 if (sweets.length - 1 == i) {
@@ -39,22 +46,16 @@ public class PresentBox implements Box {
     @Override
     public void delete(int index) {
         if (!checkEmptyBox()) {
+            Sweet[] temp = new Sweet[sweets.length - 1];
+
             if (index > sweets.length - 1 || index < 0) {
                 System.out.println("Index not found. Try again");
             } else {
+                int count = 0;
                 for (int i = 0; i < sweets.length; i++) {
-                    if (sweets[index] == sweets[i]) {
-                        sweets[index] = null;
-                        break;
+                    if (sweets[index] != sweets[i]) {
+                        temp[count++] = sweets[i];
                     }
-                }
-            }
-
-            Sweet[] temp = new Sweet[sweets.length - 1];
-            int count = 0;
-            for (int i = 0; i < sweets.length; i++) {
-                if (sweets[i] != sweets[index]) {
-                    temp[count++] = sweets[i];
                 }
             }
 
