@@ -22,15 +22,6 @@ public class Marshmallow extends Sweet{
      */
     @Override
     public String toString() {
-        return super.toString() + "marshmallow";
-    }
-
-    /**
-     * @see Sweet
-     */
-    @Override
-    public void getInfo() {
-        super.getInfo();
-        System.out.println("type " + type + " sugar is " + isSugar);
+        return super.toString() + " type " + type + " sugar is " + isSugar;
     }
 }

@@ -22,15 +22,6 @@ public class Nutella extends Sweet {
      */
     @Override
     public String toString() {
-        return super.toString() + "nutella";
-    }
-
-    /**
-     * @see Sweet
-     */
-    @Override
-    public void getInfo() {
-        super.getInfo();
-        System.out.println("filling " + filling + " palm oil is " + isPalmOil);
+        return super.toString() + "filling " + filling + " palm oil is " + isPalmOil;
     }
 }

@@ -22,15 +22,6 @@ public class Oreo extends Sweet {
      */
     @Override
     public String toString() {
-        return super.toString() + "oreo";
-    }
-
-    /**
-     * @see Sweet
-     */
-    @Override
-    public void getInfo() {
-        super.getInfo();
-        System.out.println("glaze " + isGlaze + " with supplements " + supplements);
+        return super.toString() + " glaze " + isGlaze + " with supplements " + supplements;
     }
 }

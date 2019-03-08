@@ -39,12 +39,27 @@ public class PresentBox implements Box {
      */
     @Override
     public void delete(int index) {
-        for (int i = 0; i < sweets.length; i++) {
-            if (sweets[index] == sweets[i]) {
-                sweets[index] = null;
-                break;
+        if (index > sweets.length - 1) {
+            System.out.println("Index not found. Try again");
+        } else {
+            for (int i = 0; i < sweets.length; i++) {
+                if (sweets[index] != sweets[i]) {
+                    sweets[index] = null;
+                    break;
+                }
             }
         }
+
+        Sweet[] temp = new Sweet[sweets.length - 1];
+        int count = 0;
+        for (Sweet sweet : sweets) {
+            if (sweet != null) {
+                temp[count++] = sweet;
+            }
+        }
+
+        System.arraycopy(temp, 0, sweets, 0, sweets.length - 1);
+        sweets = Arrays.copyOf(sweets, sweets.length - 1);
     }
 
     /**
@@ -85,9 +100,7 @@ public class PresentBox implements Box {
     @Override
     public void showInfo() {
         for (Sweet sweet : sweets) {
-            if (sweet != null) {
-                sweet.getInfo();
-            }
+            System.out.println(sweet.toString());
         }
     }
 
@@ -96,19 +109,15 @@ public class PresentBox implements Box {
      */
     @Override
     public void reduceWeight() {
-        double min = sweets[keepMin()].getWeight();
-        for (Sweet sweet : sweets) {
-            if (sweet != null && sweet.getWeight() < min) {
-                min = sweet.getWeight();
-            }
-        }
-
+        double min = sweets[0].getWeight();
+        int indexOfMin = 0;
         for (int i = 0; i < sweets.length; i++) {
-            if (sweets[i] != null && sweets[i].getWeight() == min) {
-                delete(i);
-                break;
+            if (sweets[i].getWeight() < min) {
+                min = sweets[i].getWeight();
+                indexOfMin = i;
             }
         }
+        delete(indexOfMin);
     }
 
     /**
@@ -116,31 +125,14 @@ public class PresentBox implements Box {
      */
     @Override
     public void reducePrice() {
-        double min = sweets[keepMin()].getPrice();
-        for (Sweet sweet : sweets) {
-            if (sweet != null && sweet.getPrice() < min) {
-                min = sweet.getPrice();
-            }
-        }
-
+        double min = sweets[0].getPrice();
+        int indexOfMin = 0;
         for (int i = 0; i < sweets.length; i++) {
-            if (sweets[i] != null && sweets[i].getPrice() == min) {
-                delete(i);
-                break;
+            if (sweets[i].getPrice() < min) {
+                min = sweets[i].getPrice();
+                indexOfMin = i;
             }
         }
-    }
-
-    /**
-     * Selecting the first non-zero element to assign a minimum
-     * @return index element
-     */
-    private int keepMin() {
-        for (int i = 0; i < sweets.length; i++) {
-            if (sweets[i] != null) {
-                return i;
-            }
-        }
-        return 0;
+        delete(indexOfMin);
     }
 }

@@ -22,14 +22,7 @@ public abstract class Sweet {
      */
     @Override
     public String toString() {
-        return "Sweet ";
-    }
-
-    /**
-     * Info about sweet
-     */
-    public void getInfo() {
-        System.out.print(name + " weight " + weight + " price " + price + " ");
+        return name + " weight " + weight + " price " + price + " ";
     }
 
     /**
