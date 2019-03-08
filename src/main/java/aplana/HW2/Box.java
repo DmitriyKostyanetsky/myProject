@@ -14,4 +14,5 @@ public interface Box {
     void showInfo();
     void reduceWeight();
     void reducePrice();
+    boolean checkEmptyBox();
 }
