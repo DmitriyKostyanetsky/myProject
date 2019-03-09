@@ -13,6 +13,12 @@ public class Solution {
         Sweet sweet2 = new Oreo("MamaMia", 40.46, 80.45, true, "nut");
         Sweet sweet3 = new Nutella("Boom", 70.35, 240.99, "vanilla", false);
         Sweet sweet4 = new Nutella("Wow", 33.1, 199.99, "strawberry", true);
+
+        box.reducePrice();
+        box.reduceWeight();
+        box.showInfo();
+        box.delete(2);
+
         box.add(sweet1);
         box.add(sweet2);
         box.add(sweet3);

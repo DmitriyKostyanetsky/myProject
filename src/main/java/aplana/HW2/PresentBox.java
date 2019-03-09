@@ -104,6 +104,10 @@ public class PresentBox implements Box {
      */
     @Override
     public boolean checkEmptyBox() {
+        if (sweets == null) {
+            System.out.println("The gift is empty");
+            return true;
+        }
         boolean isEmpty = true;
         for (int i = 0; i < sweets.length; i++) {
             if (sweets[i] != null) {
