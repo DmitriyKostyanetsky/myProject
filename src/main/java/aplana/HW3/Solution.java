@@ -12,9 +12,11 @@ import java.util.*;
 public class Solution {
 
     public static void main(String[] args) {
-        String[] array = {"elder", "solution", "database", "commander", "white", "dry", "burn", "rum", "watch", "fury"};
+        String[] array = {"on", "dry", "fury", "white", "return", "account", "solution", "interface", "management", "autoantonym"};
         FileWriter writer;
         Random rnd = new Random();
+        Map<String, Integer> map = null;
+        List<String> sortList = null;
         try {
             writer = new FileWriter(new File("HW3.doc"));
             BufferedWriter writer1 = new BufferedWriter(writer);
@@ -29,11 +31,16 @@ public class Solution {
             writer.close();
             writer1.close();
 
+            // sort text by alphabet or length
             sortByAlph();
-            wordsCount();
-            sortByLength();
-            averageLength(array);
-            medianaValue(array);
+            sortList = sortByLength();
+
+            // search max word
+            map = wordsCount();
+
+            // calculate by length or median
+            averageLength(map);
+            medianValue(sortList);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -46,31 +53,52 @@ public class Solution {
      */
     private static void sortByAlph() throws FileNotFoundException {
         List<String> text = new ArrayList<>();
-        Scanner scanner;
-        try {
-            scanner = new Scanner(new File("HW3.doc"));
-            while (scanner.hasNext()) {
-                text.add(scanner.next());
-            }
-            Collections.sort(text);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+        Scanner scanner = new Scanner(new File("HW3.doc"));
+        while (scanner.hasNext()) {
+            text.add(scanner.next());
         }
 
-        PrintWriter writer1 = new PrintWriter("HW3.doc");
+        Collections.sort(text);
+        PrintWriter writer = new PrintWriter("HW3(sortByAlph).doc");
         for (String str : text) {
-            writer1.print(str + " ");
+            writer.print(str + " ");
         }
-        writer1.close();
+        writer.close();
+    }
+
+    /**
+     * Сортировка по длине слова
+     * @throws FileNotFoundException не найден файл
+     */
+    private static List<String> sortByLength() throws FileNotFoundException {
+        List<String> text = new ArrayList<>();
+        Scanner scanner = new Scanner(new File("HW3.doc"));
+        while (scanner.hasNext()) {
+            text.add(scanner.next());
+        }
+
+        Collections.sort(text, new Comparator<String>() {
+            @Override
+            public int compare(String o1, String o2) {
+                return o1.length() - o2.length();
+            }
+        });
+        PrintWriter writer = new PrintWriter("HW3(SortByLength).doc");
+        for (String str : text) {
+            writer.print(str + " ");
+        }
+        writer.close();
+        return text;
     }
 
     /**
      * Подсчет количества раз, одинаково встречающихся слов
      */
-    private static void wordsCount () {
+    private static Map<String, Integer> wordsCount () {
+        Map<String, Integer> stats = null;
         try {
             Scanner scanner = new Scanner(new File("HW3.doc"));
-            Map<String, Integer> stats = new HashMap<>();
+            stats = new HashMap<>();
             Integer count;
             while (scanner.hasNext()) {
                 String word = scanner.next();
@@ -85,6 +113,7 @@ public class Solution {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+        return stats;
     }
 
     /**
@@ -106,68 +135,40 @@ public class Solution {
     }
 
     /**
-     * Сортировка по длине слова
-     * @throws FileNotFoundException не найден файл
-     */
-    private static void sortByLength() throws FileNotFoundException {
-        List<String> text = new ArrayList<>();
-        Scanner scanner;
-        try {
-            scanner = new Scanner(new File("HW3.doc"));
-            while (scanner.hasNext()) {
-                text.add(scanner.next());
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        Collections.sort(text, new Comparator<String>() {
-            @Override
-            public int compare(String o1, String o2) {
-                return o1.length() - o2.length();
-            }
-        });
-
-        PrintWriter writer1 = new PrintWriter("HW3(SortByLength).doc");
-        for (String str : text) {
-            writer1.print(str + " ");
-        }
-        writer1.close();
-    }
-
-    /**
      * Средняя длина слов
-     * @param arr массив строк
      */
-    private static void averageLength(String[] arr) {
+    private static void averageLength(Map<String, Integer> map) {
         double result = 0;
-        for (int i = 0; i < arr.length; i++) {
-            result += arr[i].length();
-        }
 
-        result = result / arr.length;
-        System.out.println("Average length : " + result);
+        if (map == null) {
+            System.out.println("Map is null");
+        } else {
+            for (Map.Entry<String, Integer> entry : map.entrySet()) {
+                String key = entry.getKey();
+                Integer value = entry.getValue();
+                result += key.length() * value;
+            }
+            result = result / 10000;
+            System.out.println("Average length : " + result);
+        }
     }
 
     /**
      * Медианная длина слов
-     * @param arr массив строк
      */
-    private static void medianaValue(String[] arr) {
-        Arrays.sort(arr, new Comparator<String>() {
-            @Override
-            public int compare(String o1, String o2) {
-                return o1.length() - o2.length();
-            }
-        });
+    private static void medianValue(List<String> sortedList) {
         int result;
-        if (arr.length % 2 == 0) {
-            int indexFirst = arr.length/ 2 - 1;
-            int indexSecond = arr.length / 2;
-            result = arr[indexFirst].length() + arr[indexSecond].length();
+        if (sortedList == null) {
+            System.out.println("List is null");
         } else {
-            result = arr[arr.length / 2].length();
+            if (sortedList.size() % 2 == 0) {
+                int indexFirst = 10000 / 2 - 1;
+                int indexSecond = 10000 / 2;
+                result = sortedList.get(indexFirst).length() + sortedList.get(indexSecond).length();
+            } else {
+                result = sortedList.get(sortedList.size() / 2).length();
+            }
+            System.out.println("Mediana length : " + result);
         }
-        System.out.println("Mediana length : " + result);
     }
 }
