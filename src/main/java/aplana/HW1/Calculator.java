@@ -1,4 +1,4 @@
-package aplana;
+package aplana.HW1;
 
 import java.util.Scanner;
 
