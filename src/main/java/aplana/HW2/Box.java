@@ -9,8 +9,6 @@ package aplana.HW2;
 public interface Box {
     void add(Sweet sweet);
     void delete(int index);
-    double showWeight();
-    double showPrice();
     void showInfo();
     void reduceWeight();
     void reducePrice();

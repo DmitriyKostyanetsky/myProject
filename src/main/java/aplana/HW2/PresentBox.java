@@ -1,16 +1,26 @@
 package aplana.HW2;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * Present box
  * @author Dmitriy Kostyanetsky
  * @version 1.0
- * @since 07.03.2019
+ * @since 13.03.2019
  */
-public class PresentBox implements Box {
+public class PresentBox implements Box, Policy, RubleToDollar, RubleToEuro{
 
-    private Sweet[] sweets;
+    private List<Sweet> sweets = new ArrayList<>();
+    private Predicate<Sweet> predicate;
+
+    public PresentBox() {}
+
+    public PresentBox(Predicate<Sweet> predicate) {
+        this.predicate = predicate;
+    }
 
     /**
      * Add sweet in box
@@ -18,11 +28,18 @@ public class PresentBox implements Box {
      */
     @Override
     public void add(Sweet sweet) {
-        if (sweets == null) {
-            sweets = new Sweet[0];
+        if (predicate.test(sweet)) {
+            sweets.add(sweet);
         }
-        sweets = Arrays.copyOf(sweets, sweets.length + 1);
-        sweets[sweets.length - 1] = sweet;
+    }
+
+    /**
+     * Политика предиката
+     * @param predicate предикат с условием
+     */
+    @Override
+    public void setPolicy(Predicate<Sweet> predicate) {
+        this.predicate = predicate;
     }
 
     /**
@@ -32,58 +49,8 @@ public class PresentBox implements Box {
     @Override
     public void delete(int index) {
         if (!checkEmptyBox()) {
-            Sweet[] temp = new Sweet[sweets.length - 1];
-
-            if (index > sweets.length - 1 || index < 0) {
-                System.out.println("Index not found. Try again");
-            } else {
-                int count = 0;
-                for (int i = 0; i < sweets.length; i++) {
-                    if (sweets[index] != sweets[i]) {
-                        temp[count++] = sweets[i];
-                    }
-                }
-            }
-
-            System.arraycopy(temp, 0, sweets, 0, sweets.length - 1);
-            sweets = Arrays.copyOf(sweets, sweets.length - 1);
+            sweets.remove(index);
         }
-    }
-
-    /**
-     * Show weight of all sweets
-     * @return weight
-     */
-    @Override
-    public double showWeight() {
-        double result = 0;
-        if (!checkEmptyBox()) {
-            for (int i = 0; i < sweets.length; i++) {
-                if (sweets[i] != null) {
-                    result += sweets[i].getWeight();
-                }
-            }
-            System.out.println("Weight of all sweets : " + result);
-        }
-        return result;
-    }
-
-    /**
-     * Show price for all sweets
-     * @return price
-     */
-    @Override
-    public double showPrice() {
-        double result = 0;
-        if (!checkEmptyBox()) {
-            for (int i = 0; i < sweets.length; i++) {
-                if (sweets[i] != null) {
-                    result += sweets[i].getPrice();
-                }
-            }
-            System.out.println("Price for all sweets : " + result);
-        }
-        return result;
     }
 
     /**
@@ -92,8 +59,8 @@ public class PresentBox implements Box {
     @Override
     public void showInfo() {
         if (!checkEmptyBox()) {
-            for (Sweet sweet : sweets) {
-                System.out.println(sweet.toString());
+            for (int i = 0; i < sweets.size(); i++) {
+                System.out.println(i + 1 + ") " + sweets.get(i).toString());
             }
         }
     }
@@ -104,22 +71,11 @@ public class PresentBox implements Box {
      */
     @Override
     public boolean checkEmptyBox() {
-        if (sweets == null) {
-            System.out.println("The gift is empty");
+        if (sweets.isEmpty()) {
+            System.out.println("Ничего нет в коробке!");
             return true;
         }
-        boolean isEmpty = true;
-        for (int i = 0; i < sweets.length; i++) {
-            if (sweets[i] != null) {
-                isEmpty = false;
-                break;
-            }
-        }
-
-        if (isEmpty) {
-            System.out.println("Box is empty");
-        }
-        return isEmpty;
+        return false;
     }
 
     /**
@@ -128,11 +84,11 @@ public class PresentBox implements Box {
     @Override
     public void reduceWeight() {
         if (!checkEmptyBox()) {
-            double min = sweets[0].getWeight();
+            double min = sweets.get(0).getWeight();
             int indexOfMin = 0;
-            for (int i = 0; i < sweets.length; i++) {
-                if (sweets[i].getWeight() < min) {
-                    min = sweets[i].getWeight();
+            for (int i = 0; i < sweets.size(); i++) {
+                if (sweets.get(i).getWeight() < min) {
+                    min = sweets.get(i).getWeight();
                     indexOfMin = i;
                 }
             }
@@ -146,15 +102,103 @@ public class PresentBox implements Box {
     @Override
     public void reducePrice() {
         if (!checkEmptyBox()) {
-            double min = sweets[0].getPrice();
+            double min = sweets.get(0).getPrice();
             int indexOfMin = 0;
-            for (int i = 0; i < sweets.length; i++) {
-                if (sweets[i].getPrice() < min) {
-                    min = sweets[i].getPrice();
+            for (int i = 0; i < sweets.size(); i++) {
+                if (sweets.get(i).getPrice() < min) {
+                    min = sweets.get(i).getPrice();
                     indexOfMin = i;
                 }
             }
             delete(indexOfMin);
         }
+    }
+
+    /**
+     * Конвертация рублей в доллары
+     * @param list лист со сладостями
+     */
+    @Override
+    public void convertToDollar(List<Sweet> list) {
+        if (!checkEmptyBox()) {
+            double result = totalSum();
+            Function<Double, Double> function1 = aDouble -> aDouble / 70;
+            result = function1.apply(result);
+            System.out.println("Сумма в долларах : " + result);
+        }
+    }
+
+    /**
+     * Конвертация рублей в евро
+     * @param list лист со сладостями
+     */
+    @Override
+    public void convertToEuro(List<Sweet> list) {
+        if (!checkEmptyBox()) {
+            double result = totalSum();
+            Function<Double, Double> function2 = aDouble -> aDouble / 85;
+            result = function2.apply(result);
+            System.out.println("Сумма в евро : " + result);
+        }
+    }
+
+    public List<Sweet> getSweets() {
+        return sweets;
+    }
+
+    /**
+     * Название класса каждой сладости
+     */
+    public void everyClassName() {
+        sweets.stream()
+                .sorted((o1, o2) -> Double.compare(o2.getWeight(), o1.getWeight()))
+                .forEach(sweet -> System.out.println("В коробке лежит : " + sweet.getClass().getSimpleName()));
+    }
+
+    /**
+     * Подсчет кол-ва нутеллы в коробке
+     */
+    public void nutCount() {
+        Predicate<Sweet> predicate = s -> s.getClass().getSimpleName().startsWith("Nut");
+        long i = sweets.stream()
+                .filter(predicate)
+                .count();
+        System.out.print("Количество банок нутеллы : " + i);
+    }
+
+    /**
+     * Сумма сладостей
+     */
+    public double totalSum() {
+        return priceList().stream()
+                .reduce(0.0, Double::sum);
+    }
+
+    /**
+     * Метод добавляет цену сладости в новый лист
+     * @return прайс лист сладостей
+     */
+    private List<Double> priceList() {
+        List<Double> list = new ArrayList<>();
+        sweets.forEach(sweet -> list.add(sweet.getPrice()));
+        return list;
+    }
+
+    /**
+     * Вес всех сладостей
+     */
+    public double totalWeight() {
+        return weightList().stream()
+                .reduce(0.0, Double::sum);
+    }
+
+    /**
+     * Метод добавляет цену сладости в новый лист
+     * @return прайс лист сладостей
+     */
+    private List<Double> weightList() {
+        List<Double> list = new ArrayList<>();
+        sweets.forEach(sweet -> list.add(sweet.getWeight()));
+        return list;
     }
 }
