@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
  * Сценарий теста росгосстраха
  * @author Dmitriy Kostyanetsky
  * @version 1.0
- * @since 15.03.2019
+ * @since 16.03.2019
  */
 public class Solution {
 
@@ -48,10 +48,9 @@ public class Solution {
         path = "//a[contains(text(), 'Страхование выезжающих')]";
         checkByXPath(path, "Страхование выезжающих");
 
-        scrollDown();
-
         // Выбираем рассчитать
         path = "//a[contains(text(), 'Рассчитать')]";
+        scrollDown(driver.findElement(By.xpath(path)));
         checkByXPath(path, "РАССЧИТАТЬ");
 
         // Выбираем страхование выезжающих за рубеж
@@ -73,10 +72,9 @@ public class Solution {
         element = checkByXPath(path, "");
         new Select(element).selectByVisibleText("Испания");
 
-        scrollDown();
-
         // Выбираем дату первой поездки
         path = "//input[@data-test-name='FirstDepartureDate']";
+        scrollDown(driver.findElement(By.xpath(path)));
         element = checkByXPath(path, "");
         createDate(element);
         element.sendKeys(Keys.ENTER);
@@ -108,10 +106,9 @@ public class Solution {
         path = "//*[text() = ' активный отдых или спорт ']/ancestor::div[@class=\"calc-vzr-toggle-risk-group\"]//div[@class=\"toggle off toggle-rgs\"]";
         checkboxCheck(path);
 
-        scrollDown();
-
         // Соглашаемся с условиями
         path = "//input[@data-test-name=\"IsProcessingPersonalDataToCalculate\"]";
+        scrollDown(driver.findElement(By.xpath(path)));
         checkboxCheck(path);
 
         // Рассчитываем сумму
@@ -121,7 +118,9 @@ public class Solution {
         // Ждем рассчета калькулятора
         path = "//div[@class=\"program-name\"][contains(text(), \"Комфорт\")]";
         checkByXPath(path, "Комфорт");
-        scrollTop();
+
+        path = "//span[@class='h1'][contains(text(), 'Страхование')]";
+        scrollDown(driver.findElement(By.xpath(path)));
 
         System.out.println("----------Итоговый отчет----------");
         path = "//div[@class=\"summary-row\"]//child::span[contains(text(), 'Многократные')]";
@@ -139,11 +138,11 @@ public class Solution {
         actual.add(path);
 
         expect = new ArrayList<String>() {{
-            add("Многократные");
+            add("Многократные поездки в течение года");
             add("Шенген");
-            add("MATIUS");
-            add("11");
-            add("включая активный");
+            add("MATIUS DERZKI");
+            add("11.02.1988");
+            add("(включая активный отдых)");
         }};
 
         if(verificationReport(actual, expect)) {
@@ -184,17 +183,9 @@ public class Solution {
     /**
      * Проскролить окно до элемента
      */
-    private static void scrollTop() {
-        JavascriptExecutor js = (JavascriptExecutor)driver;
-        js.executeScript("window.scrollTo(0, -document.body.scrollHeight)");
-    }
-
-    /**
-     * Проскролить окно на 900 пикселей вниз
-     */
-    private static void scrollDown() {
+    private static void scrollDown(WebElement element) {
         JavascriptExecutor js = (JavascriptExecutor) driver;
-        js.executeScript("window.scrollBy(0, 900)");
+        js.executeScript("arguments[0].scrollIntoView();", element);
     }
 
     /**
