@@ -96,7 +96,7 @@ public class Solution {
         System.out.println("--------------------------------------------------------");
 
         // Общая сумма и общий вес 1ой коробки
-        ((PresentBox) box).everyClassName();
+        ((PresentBox) box).sortByComparator((o1, o2) -> Double.compare(o2.getWeight(), o1.getWeight()));
         double res = ((PresentBox) box).totalSum();
         System.out.println("Сумма всех сладостей в рублях : " + res);
         res = ((PresentBox) box).totalWeight();
@@ -110,10 +110,17 @@ public class Solution {
 
         System.out.println("--------------------------------------------------------");
 
-        // Сколько где нутеллы
-        ((PresentBox) box).nutCount(); System.out.println(" в 1ой коробке");
-        ((PresentBox) box2).nutCount(); System.out.println(" во 2ой коробке");
-        ((PresentBox) box3).nutCount(); System.out.println(" в 3ей коробке");
-        ((PresentBox) box4).nutCount(); System.out.println(" в 4ой коробке");
+        // Фильтр данных по условию
+        System.out.println("Поиск нутеллы");
+        ((PresentBox) box).filterByPredicate(s -> s.getClass().getSimpleName().startsWith("Nut"));
+
+        System.out.println("Поиск сладости с ценой больше 100");
+        ((PresentBox) box2).filterByPredicate(s -> s.getPrice() > 100);
+
+        System.out.println("Поиск сладости с весом больше 20 и ценой меньше 200");
+        ((PresentBox) box3).filterByPredicate(s -> s.getWeight() > 20 && s.getPrice() < 200);
+
+        System.out.println("Поиск печенья с ценой меньше 100");
+        ((PresentBox) box4).filterByPredicate(s -> s.getClass().getSimpleName().startsWith("Or") && s.getPrice() < 100);
     }
 }

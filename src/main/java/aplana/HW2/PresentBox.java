@@ -1,6 +1,7 @@
 package aplana.HW2;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -140,28 +141,22 @@ public class PresentBox implements Box{
         }
     }
 
-    public List<Sweet> getSweets() {
-        return sweets;
-    }
-
     /**
-     * Название класса каждой сладости
+     * Сортировка по условию
      */
-    public void everyClassName() {
+    public void sortByComparator(Comparator<Sweet> comparator) {
         sweets.stream()
-                .sorted((o1, o2) -> Double.compare(o2.getWeight(), o1.getWeight()))
+                .sorted(comparator)
                 .forEach(sweet -> System.out.println("В коробке лежит : " + sweet.getClass().getSimpleName()));
     }
 
     /**
-     * Подсчет кол-ва нутеллы в коробке
+     * Фильтр по условию
      */
-    public void nutCount() {
-        Predicate<Sweet> predicate = s -> s.getClass().getSimpleName().startsWith("Nut");
-        long i = sweets.stream()
+    public void filterByPredicate(Predicate<Sweet> predicate) {
+        sweets.stream()
                 .filter(predicate)
-                .count();
-        System.out.print("Количество банок нутеллы : " + i);
+                .forEach(sweet -> System.out.println(sweet.toString()));
     }
 
     /**
