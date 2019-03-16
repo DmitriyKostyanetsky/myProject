@@ -84,11 +84,11 @@ public class Solution {
         checkByXPath(path, "Не более 90 дней");
 
         // Заполняем ФИО и дату рождения
-        path = "//input[@placeholder=\"NIKOLAEV NIKOLAY\"][@class=\"form-control\" != @disabled]";
+        path = "//div[@data-fi-input-mode=\"combined\"]//div[@class=\"form-group\"]//input[@class=\"form-control\" != @disabled]";
         checkByXPath(path, "");
         path = "//input[@data-test-name=\"BirthDate\"]";
         checkByXPath(path, "");
-        path = "//input[@placeholder=\"NIKOLAEV NIKOLAY\"][@class=\"form-control validation-control-has-error\"]";
+        path = "//div[@data-fi-input-mode=\"combined\"]//div[@class=\"form-group\"]//input[@class=\"form-control validation-control-has-error\" != @disabled]";
         driver.findElement(By.xpath(path)).clear();
         element = driver.findElement(By.xpath(path));
         element.sendKeys("MATIUS");
@@ -103,7 +103,7 @@ public class Solution {
         element.sendKeys("1988");
 
         // Выбираем активный отдых
-        path = "//*[text() = ' активный отдых или спорт ']/ancestor::div[@class=\"calc-vzr-toggle-risk-group\"]//div[@class=\"toggle off toggle-rgs\"]";
+        path = "//*[contains(text(), 'активный отдых или спорт')]/ancestor::div[@class=\"calc-vzr-toggle-risk-group\"]//div[@class=\"toggle off toggle-rgs\"]";
         checkboxCheck(path);
 
         // Соглашаемся с условиями
