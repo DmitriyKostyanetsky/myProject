@@ -120,21 +120,22 @@ public class Solution {
         checkByXPath(path, "Комфорт");
 
         path = "//span[@class='h1'][contains(text(), 'Страхование')]";
+        checkByXPath(path, "Страхование");
         scrollDown(driver.findElement(By.xpath(path)));
 
         System.out.println("----------Итоговый отчет----------");
-        path = "//div[@class=\"summary-row\"]//child::span[contains(text(), 'Многократные')]";
+        path = "//span[@data-bind=\"with: Trips\"]//child::span[@class='text-bold']";
         actual.add(path);
 
-        path = "//div[@class=\"summary-row\"]//child::strong[contains(text(), 'Шенг')]";
+        path = "//span[@data-bind=\"foreach: countries\"]//child::strong[@data-bind=\"text: Name\"]";
         actual.add(path);
-        path = "//div[@class=\"summary-row\"]//child::strong[contains(text(), 'MATIUS')]";
-        actual.add(path);
-
-        path = "//div[@class=\"summary-row\"]//child::strong[contains(text(), '11')]";
+        path = "//div[@class=\"summary-row\"]//child::strong[@data-bind=\"text: LastName() + ' ' + FirstName()\"]";
         actual.add(path);
 
-        path = "//div[@class=\"summary-row\"]//child::small[contains(text(), 'включая активный')]";
+        path = "//div[@class=\"summary-row\"]//child::strong[@data-bind=\" text: BirthDay.repr('moscowRussianDate')\"]";
+        actual.add(path);
+
+        path = "//div[@style=\"visibility: visible; opacity: 1; display: block; transform: translateX(0px);\"]//child::small[@data-bind=\"text: ko.unwrap('undefined' === typeof info ? '' : info)\"]";
         actual.add(path);
 
         expect = new ArrayList<String>() {{
@@ -185,6 +186,10 @@ public class Solution {
      */
     private static void scrollDown(WebElement element) {
         JavascriptExecutor js = (JavascriptExecutor) driver;
+        if (element == null) {
+            System.out.println("Элемент не найден");
+            driver.quit();
+        }
         js.executeScript("arguments[0].scrollIntoView();", element);
     }
 
