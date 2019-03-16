@@ -9,9 +9,9 @@ import java.util.function.Predicate;
  * Present box
  * @author Dmitriy Kostyanetsky
  * @version 1.0
- * @since 13.03.2019
+ * @since 16.03.2019
  */
-public class PresentBox implements Box, Policy, RubleToDollar, RubleToEuro{
+public class PresentBox implements Box{
 
     private List<Sweet> sweets = new ArrayList<>();
     private Predicate<Sweet> predicate;
@@ -116,28 +116,26 @@ public class PresentBox implements Box, Policy, RubleToDollar, RubleToEuro{
 
     /**
      * Конвертация рублей в доллары
-     * @param list лист со сладостями
+     * @param function функция, переводящая сумму в доллары
      */
     @Override
-    public void convertToDollar(List<Sweet> list) {
+    public void convertToDollar(Function<Double, Double> function) {
         if (!checkEmptyBox()) {
             double result = totalSum();
-            Function<Double, Double> function1 = aDouble -> aDouble / 70;
-            result = function1.apply(result);
+            result = function.apply(result);
             System.out.println("Сумма в долларах : " + result);
         }
     }
 
     /**
      * Конвертация рублей в евро
-     * @param list лист со сладостями
+     * @param function функция, переводящая сумму в евро
      */
     @Override
-    public void convertToEuro(List<Sweet> list) {
+    public void convertToEuro(Function<Double, Double> function) {
         if (!checkEmptyBox()) {
             double result = totalSum();
-            Function<Double, Double> function2 = aDouble -> aDouble / 85;
-            result = function2.apply(result);
+            result = function.apply(result);
             System.out.println("Сумма в евро : " + result);
         }
     }

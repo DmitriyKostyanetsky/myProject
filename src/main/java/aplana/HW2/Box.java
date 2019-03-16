@@ -1,10 +1,13 @@
 package aplana.HW2;
 
+import java.util.function.Function;
+import java.util.function.Predicate;
+
 /**
  * Box interface
  * @author Dmitriy Kostyanetsky
  * @version 1.0
- * @since 07.03.2019
+ * @since 16.03.2019
  */
 public interface Box {
     void add(Sweet sweet);
@@ -13,4 +16,7 @@ public interface Box {
     void reduceWeight();
     void reducePrice();
     boolean checkEmptyBox();
+    void setPolicy(Predicate<Sweet> predicate);
+    void convertToDollar(Function<Double, Double> function);
+    void convertToEuro(Function<Double, Double> function);
 }

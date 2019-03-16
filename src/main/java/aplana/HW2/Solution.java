@@ -6,7 +6,7 @@ import java.util.function.Predicate;
  * Collecting sweets in box
  * @author Dmitriy Kostyanetsky
  * @version 1.0
- * @since 13.03.2019
+ * @since 16.03.2019
  */
 public class Solution {
     public static void main(String[] args) {
@@ -40,7 +40,7 @@ public class Solution {
 
         // Первая коробка
         Box box = new PresentBox();
-        ((PresentBox) box).setPolicy(sweet -> sweet.getPrice() < 200);
+        box.setPolicy(sweet -> sweet.getPrice() < 200);
         box.add(sweetFirstFactory);
         box.add(sweetSecondFactory);
         box.add(sweetThirdFactory);
@@ -62,7 +62,7 @@ public class Solution {
 
         // Третья коробка
         Box box3 = new PresentBox();
-        ((PresentBox) box3).setPolicy(sweet -> sweet.getClass().getSimpleName().equals("Oreo"));
+        box3.setPolicy(sweet -> sweet.getClass().getSimpleName().equals("Oreo"));
         box3.add(sweetFirstFactory);
         box3.add(sweetSecondFactory);
         box3.add(sweetThirdFactory);
@@ -86,12 +86,12 @@ public class Solution {
 
         // Перевод суммы в доллары и евро
         System.out.println("Конвертация суммы из первой коробки");
-        ((PresentBox) box).convertToDollar(((PresentBox) box).getSweets());
-        ((PresentBox) box).convertToEuro(((PresentBox) box).getSweets());
+        box.convertToDollar(aDouble -> aDouble * 70);
+        box.convertToEuro(aDouble -> aDouble * 80);
 
         System.out.println("Конвертация суммы из третьей коробки");
-        ((PresentBox) box3).convertToDollar(((PresentBox) box).getSweets());
-        ((PresentBox) box3).convertToEuro(((PresentBox) box).getSweets());
+        box.convertToDollar(aDouble -> aDouble * 70);
+        box.convertToEuro(aDouble -> aDouble * 80);
 
         System.out.println("--------------------------------------------------------");
 
@@ -111,7 +111,7 @@ public class Solution {
         System.out.println("--------------------------------------------------------");
 
         // Сколько где нутеллы
-         ((PresentBox) box).nutCount(); System.out.println(" в 1ой коробке");
+        ((PresentBox) box).nutCount(); System.out.println(" в 1ой коробке");
         ((PresentBox) box2).nutCount(); System.out.println(" во 2ой коробке");
         ((PresentBox) box3).nutCount(); System.out.println(" в 3ей коробке");
         ((PresentBox) box4).nutCount(); System.out.println(" в 4ой коробке");
