@@ -88,7 +88,7 @@ public class Solution {
         checkByXPath(path, "");
         path = "//input[@data-test-name=\"BirthDate\"]";
         checkByXPath(path, "");
-        path = "//div[@data-fi-input-mode=\"combined\"]//div[@class=\"form-group\"]//input[@class=\"form-control validation-control-has-error\" != @disabled]";
+        path = "//div[@class=\"form-group validation-group-has-error\"]//input[@class=\"form-control validation-control-has-error\" != @disabled]";
         driver.findElement(By.xpath(path)).clear();
         element = driver.findElement(By.xpath(path));
         element.sendKeys("MATIUS");
