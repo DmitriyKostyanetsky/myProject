@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -24,134 +25,161 @@ public class Solution {
     private static WebDriver driver;
 
     public static void main(String[] args) {
-        System.setProperty("webdriver.chrome.driver", "drv/chromedriver.exe");
+        for (int i = 0; i < 10; i++) {
+            System.setProperty("webdriver.chrome.driver", "drv/chromedriver.exe");
 
-        String path;
-        WebElement element;
-        List<String> actual = new ArrayList<>();
-        List<String> expect;
-        driver = new ChromeDriver();
-        String url = "https://www.rgs.ru/";
-        driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
-        driver.manage().window().maximize();
-        driver.get(url);
+            String path;
+            WebElement element;
+            List<String> actual = new ArrayList<>();
+            List<String> expect;
+            driver = new ChromeDriver();
+            String url = "https://www.rgs.ru/";
+            driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+            driver.manage().window().maximize();
+            driver.get(url);
 
-        // Выбираем страхование
-        path = "//ol/li/a[contains(text(), 'Страхование')]";
-        checkByXPath(path, "Страхование");
+            // Выбираем страхование
+            path = "//ol/li/a[contains(text(), 'Страхование')]";
+            checkByXPath(path, "Страхование");
 
-        // Выбираем Путешествия
-        path = "//a[@href=\"https://www.rgs.ru/products/private_person/tour/index.wbp\"]";
-        checkByXPath(path, "Путешествия");
+            // Выбираем Путешествия
+            path = "//a[@href=\"https://www.rgs.ru/products/private_person/tour/index.wbp\"]";
+            checkByXPath(path, "Путешествия");
 
-        // Выбираем Страхование выезжающих за рубеж
-        path = "//a[contains(text(), 'Страхование выезжающих')]";
-        checkByXPath(path, "Страхование выезжающих");
+            // Выбираем Страхование выезжающих за рубеж
+            path = "//a[contains(text(), 'Страхование выезжающих')]";
+            checkByXPath(path, "Страхование выезжающих");
 
-        // Выбираем рассчитать
-        path = "//a[contains(text(), 'Рассчитать')]";
-        scrollDown(driver.findElement(By.xpath(path)));
-        checkByXPath(path, "РАССЧИТАТЬ");
+            // Выбираем рассчитать
+            path = "//a[contains(text(), 'Рассчитать')]";
+            scrollDown(driver.findElement(By.xpath(path)));
+            checkByXPath(path, "РАССЧИТАТЬ");
 
-        // Выбираем страхование выезжающих за рубеж
-        path = "//span[contains(text(), 'Страхование выезжающих за')][@class='h1']";
-        checkByXPath(path, "Страхование выезжающих за рубеж");
+            // Выбираем страхование выезжающих за рубеж
+            path = "//span[contains(text(), 'Страхование выезжающих за')][@class='h1']";
+            checkByXPath(path, "Страхование выезжающих за рубеж");
 
-        // Выбираем несколько в течение года
-        path = "//button[@data-test-value='Multiple']";
-        checkByXPath(path, "");
+            // Выбираем несколько в течение года
+            path = "//button[@data-test-value='Multiple']";
+            checkByXPath(path, "");
 
-        // Заполняем поле шенгеном
-        path = "//input[@class=\"form-control-multiple-autocomplete-actual-input tt-input\"]";
-        checkByXPath(path, "");
-        element = fillField(path, "Шенген");
-        element.sendKeys(Keys.DOWN, Keys.ENTER);
+            // Заполняем поле шенгеном
+            path = "//input[@class=\"form-control-multiple-autocomplete-actual-input tt-input\"]";
+            checkByXPath(path, "");
+            element = fillField(path, "Шенген");
+            element.sendKeys(Keys.DOWN, Keys.ENTER);
 
-        // Выбираем Испанию
-        path = "//select[@id='ArrivalCountryList']";
-        element = checkByXPath(path, "");
-        new Select(element).selectByVisibleText("Испания");
+            // Выбираем Испанию
+            path = "//select[@id='ArrivalCountryList']";
+            element = checkByXPath(path, "");
+            new Select(element).selectByVisibleText("Испания");
 
-        // Выбираем дату первой поездки
-        path = "//input[@data-test-name='FirstDepartureDate']";
-        scrollDown(driver.findElement(By.xpath(path)));
-        element = checkByXPath(path, "");
-        createDate(element);
-        element.sendKeys(Keys.ENTER);
+            // Выбираем дату первой поездки
+            path = "//input[@data-test-name='FirstDepartureDate']";
+            scrollDown(driver.findElement(By.xpath(path)));
+            element = checkByXPath(path, "");
+            createDate(element);
+            element.sendKeys(Keys.ENTER);
 
-        // Не более 90 дней
-        path = "//label[@class = 'btn btn-attention']";
-        checkByXPath(path, "Не более 90 дней");
+            // Не более 90 дней
+            path = "//label[@class = 'btn btn-attention']";
+            checkByXPath(path, "Не более 90 дней");
 
-        // Заполняем ФИО и дату рождения
-        path = "//div[@data-fi-input-mode=\"combined\"]//div[@class=\"form-group\"]//input[@class=\"form-control\" != @disabled]";
-        checkByXPath(path, "");
-        path = "//input[@data-test-name=\"BirthDate\"]";
-        checkByXPath(path, "");
-        path = "//div[@class=\"form-group validation-group-has-error\"]//input[@class=\"form-control validation-control-has-error\" != @disabled]";
-        driver.findElement(By.xpath(path)).clear();
-        element = driver.findElement(By.xpath(path));
-        element.sendKeys("MATIUS");
-        element.sendKeys(Keys.SPACE);
-        element.sendKeys("DERZKI");
-        path = "//input[@data-test-name=\"BirthDate\"][@class=\"form-control width-xs-9rem width-sm-9rem validation-control-has-error\"]";
-        driver.findElement(By.xpath(path)).click();
-        driver.findElement(By.xpath(path)).clear();
-        element = driver.findElement(By.xpath(path));
-        element.sendKeys("11");
-        element.sendKeys("02");
-        element.sendKeys("1988");
+            // Заполняем ФИО и дату рождения
+            path = "//div[@data-fi-input-mode=\"combined\"]//div[@class=\"form-group\"]//input[@class=\"form-control\" != @disabled]";
+            element = checkByXPath(path, "");
+            element.click();
+            element.clear();
+            element.sendKeys("MATIUS DERZKI");
 
-        // Выбираем активный отдых
-        path = "//*[contains(text(), 'активный отдых или спорт')]/ancestor::div[@class=\"calc-vzr-toggle-risk-group\"]//div[@class=\"toggle off toggle-rgs\"]";
-        checkboxCheck(path);
+            path = "//input[@data-test-name=\"BirthDate\"]";
+            element = checkByXPath(path, "");
+            element.click();
+            element.clear();
+            element.sendKeys("11021998");
 
-        // Соглашаемся с условиями
-        path = "//input[@data-test-name=\"IsProcessingPersonalDataToCalculate\"]";
-        scrollDown(driver.findElement(By.xpath(path)));
-        checkboxCheck(path);
+            // Выбираем активный отдых
+            path = "//*[contains(text(), 'активный отдых или спорт')]/ancestor::div[@class=\"calc-vzr-toggle-risk-group\"]//div[@class=\"toggle off toggle-rgs\"]";
+            checkboxCheck(path);
 
-        // Рассчитываем сумму
-        path = "//button[contains(text(), 'Рассчитать')][@class=\"btn btn-primary btn-sm text-uppercase text-semibold\"]";
-        checkByXPath(path, "РАССЧИТАТЬ");
+            // Проверяем правильность ввода ФИО
+            path = "//div[@class=\"pull-left margin-right-ms-0 width-xs-auto width-sm-21rem margin-bottom-ms-2\"]//input[@class=\"form-control validation-control-has-success\" != @disabled][@data-test-name=\"FullName\"]";
+            String errorPath = "//div[@class=\"pull-left margin-right-ms-0 width-xs-auto width-sm-21rem margin-bottom-ms-2\"]//input[@class=\"form-control validation-control-has-error\" != @disabled][@data-test-name=\"FullName\"]";
+            checkInsertedValues("MATIUS DERZKI", path, errorPath);
 
-        // Ждем рассчета калькулятора
-        path = "//div[@class=\"program-name\"][contains(text(), \"Комфорт\")]";
-        checkByXPath(path, "Комфорт");
+            // Проверяем правильность ввода даты
+            path = "//input[@data-test-name=\"BirthDate\"][@class=\"form-control width-xs-9rem width-sm-9rem validation-control-has-success\"]";
+            errorPath = "//input[@data-test-name=\"BirthDate\"][@class=\"form-control width-xs-9rem width-sm-9rem validation-control-has-error\"]";
+            checkInsertedValues("11021998", path, errorPath);
 
-        path = "//span[@class='h1'][contains(text(), 'Страхование')]";
-        checkByXPath(path, "Страхование");
-        scrollDown(driver.findElement(By.xpath(path)));
+            // Соглашаемся с условиями
+            path = "//input[@data-test-name=\"IsProcessingPersonalDataToCalculate\"]";
+            scrollDown(driver.findElement(By.xpath(path)));
+            System.out.println("Прошел скролл");
+            checkboxCheck(path);
+            System.out.println("Прошел чекбокс");
 
-        System.out.println("----------Итоговый отчет----------");
-        path = "//span[@data-bind=\"with: Trips\"]//child::span[@class='text-bold']";
-        actual.add(path);
+            // Рассчитываем сумму
+            path = "//button[contains(text(), 'Рассчитать')][@class=\"btn btn-primary btn-sm text-uppercase text-semibold\"]";
+            checkByXPath(path, "РАССЧИТАТЬ");
 
-        path = "//span[@data-bind=\"foreach: countries\"]//child::strong[@data-bind=\"text: Name\"]";
-        actual.add(path);
-        path = "//div[@class=\"summary-row\"]//child::strong[@data-bind=\"text: LastName() + ' ' + FirstName()\"]";
-        actual.add(path);
+            // Ждем рассчета калькулятора
+            path = "//div[@class=\"program-name\"][contains(text(), \"Комфорт\")]";
+            checkByXPath(path, "Комфорт");
 
-        path = "//div[@class=\"summary-row\"]//child::strong[@data-bind=\" text: BirthDay.repr('moscowRussianDate')\"]";
-        actual.add(path);
+            path = "//span[@class='h1'][contains(text(), 'Страхование')]";
+            scrollDown(driver.findElement(By.xpath(path)));
+            checkByXPath(path, "Страхование");
 
-        path = "//div[@style=\"visibility: visible; opacity: 1; display: block; transform: translateX(0px);\"]//child::small[@data-bind=\"text: ko.unwrap('undefined' === typeof info ? '' : info)\"]";
-        actual.add(path);
+            System.out.println("----------Итоговый отчет----------");
+            path = "//span[@data-bind=\"with: Trips\"]//child::span[@class='text-bold']";
+            actual.add(path);
 
-        expect = new ArrayList<String>() {{
-            add("Многократные поездки в течение года");
-            add("Шенген");
-            add("MATIUS DERZKI");
-            add("11.02.1988");
-            add("(включая активный отдых)");
-        }};
+            path = "//span[@data-bind=\"foreach: countries\"]//child::strong[@data-bind=\"text: Name\"]";
+            actual.add(path);
+            path = "//div[@class=\"summary-row\"]//child::strong[@data-bind=\"text: LastName() + ' ' + FirstName()\"]";
+            actual.add(path);
 
-        if(verificationReport(actual, expect)) {
-            System.out.println("Сценарий пройден успешно");
-        } else {
-            System.out.println("Сценарий пройден НЕ успешно :( ");
+            path = "//div[@class=\"summary-row\"]//child::strong[@data-bind=\" text: BirthDay.repr('moscowRussianDate')\"]";
+            actual.add(path);
+
+            path = "//div[@style=\"visibility: visible; opacity: 1; display: block; transform: translateX(0px);\"]//child::small[@data-bind=\"text: ko.unwrap('undefined' === typeof info ? '' : info)\"]";
+            actual.add(path);
+
+            expect = new ArrayList<String>() {{
+                add("Многократные поездки в течение года");
+                add("Шенген");
+                add("MATIUS DERZKI");
+                add("11.02.1998");
+                add("(включая активный отдых)");
+            }};
+
+            if (verificationReport(actual, expect)) {
+                System.out.println("Сценарий пройден успешно");
+            } else {
+                System.out.println("Сценарий пройден НЕ успешно :( ");
+            }
+            driver.quit();
         }
-        driver.quit();
+    }
+
+    /**
+     * Проверяет правильность ввода данных. Вводит до тех пор пока данные не введутся коректно
+     * @param insertedValue значение которое было введено
+     * @param path ожидаемый xpath
+     * @param errorPath xpath с ошибочными данными
+     */
+    private static void checkInsertedValues(String insertedValue, String path, String errorPath) {
+         Boolean isPresent = driver.findElements(By.xpath(path)).size() > 0;
+         while (!isPresent) {
+             System.out.println("НЕ коректно введены данные");
+             WebElement element = driver.findElement(By.xpath(errorPath));
+             element.click();
+             element.clear();
+             element.sendKeys(insertedValue);
+             isPresent = driver.findElements(By.xpath(path)).size() > 0;
+         }
+        System.out.println("Коректно введены данные");
     }
 
     /**
@@ -166,18 +194,18 @@ public class Solution {
 
         try {
             wait.until(ExpectedConditions.visibilityOf(element));
-        } catch (NullPointerException e) {
+        } catch (NoSuchElementException e) {
             e.printStackTrace();
             driver.quit();
         }
 
         if (element.getText().contains(expect)) {
-            element.click();
             System.out.println("Совпадение : " + expect);
         } else {
             System.out.println("Несовпадение : " + expect + " , вместо этого : " + element.getText());
             driver.quit();
         }
+        element.click();
         return element;
     }
 
@@ -224,7 +252,7 @@ public class Solution {
      * @param path путь до элемента
      */
     private static void checkboxCheck(String path) {
-        if ( !driver.findElement(By.xpath(path)).isSelected() ) {
+        if (!driver.findElement(By.xpath(path)).isSelected()) {
             driver.findElement(By.xpath(path)).click();
             System.out.println("В чекбокс поставлена галочка");
         } else {
