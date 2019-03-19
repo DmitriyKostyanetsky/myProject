@@ -1,10 +1,11 @@
-package aplana.HW5;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.openqa.selenium.*;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -88,6 +89,7 @@ public class RgsTest extends BaseTest {
         /**
          * Страница с заполнением формы
          **/
+        System.out.println("----------------------Начало теста----------------------");
         // Выбираем несколько в течение года
         scrollDown(driver.findElement(By.xpath(countTrip)));
         checkByXPath(countTrip, "");
@@ -110,7 +112,7 @@ public class RgsTest extends BaseTest {
         path = "//input[@data-test-name='FirstDepartureDate']";
         scrollDown(driver.findElement(By.xpath(path)));
         element = checkByXPath(path, "");
-        createDate(element);
+        String dateOfFirstTrip = createDate(element);
         element.sendKeys(Keys.ENTER);
 
         // Не более 90 дней
@@ -149,30 +151,41 @@ public class RgsTest extends BaseTest {
         if (!driver.findElements(By.xpath("//*[contains(text(), 'активный отдых или спорт')]/ancestor::div[@class=\"calc-vzr-toggle-risk-group\"]//div[@class=\"toggle off toggle-rgs\"]")).isEmpty()) {
             element = driver.findElement(By.xpath("//*[contains(text(), 'активный отдых или спорт')]/ancestor::div[@class=\"calc-vzr-toggle-risk-group\"]//div[@class=\"toggle off toggle-rgs\"]"));
             element.click();
+            path = "//div[@class=\"toggle toggle-rgs\"]";
+            element = driver.findElement(By.xpath(path));
+            new WebDriverWait(driver, 10, 1000).until(ExpectedConditions.elementToBeClickable(element));
             element.click();
         }
 
-        if (isPresent) {
-            path = "//div[@class=\"toggle toggle-rgs\"]";
-            checkboxCheck(path, true);
-        } else {
+        if (isActive) {
             path = "//div[@class=\"toggle toggle-rgs off\"]";
-            checkboxCheck(path, false);
+            isElementExistst(path);
+            checkboxCheck(path, isActive);
+        } else {
+            path = "//div[@class=\"toggle toggle-rgs\"]";
+            isElementExistst(path);
+            checkboxCheck(path, isActive);
         }
 
         // Проверяем правильность ввода ФИО
         path = "//div[@class=\"pull-left margin-right-ms-0 width-xs-auto width-sm-21rem margin-bottom-ms-2\"]//input[@class=\"form-control validation-control-has-success\" != @disabled][@data-test-name=\"FullName\"]";
         String errorPath = "//div[@class=\"pull-left margin-right-ms-0 width-xs-auto width-sm-21rem margin-bottom-ms-2\"]//input[@class=\"form-control validation-control-has-error\" != @disabled][@data-test-name=\"FullName\"]";
-        checkInsertedValues("MATIUS DERZKI", path, errorPath);
+        checkInsertedValues(fio, path, errorPath);
 
         // Проверяем правильность ввода даты
         path = "//input[@data-test-name=\"BirthDate\"][@class=\"form-control width-xs-9rem width-sm-9rem validation-control-has-success\"]";
         errorPath = "//input[@data-test-name=\"BirthDate\"][@class=\"form-control width-xs-9rem width-sm-9rem validation-control-has-error\"]";
-        checkInsertedValues("11021998", path, errorPath);
+        checkInsertedValues(birthday, path, errorPath);
+
+        // Проверяем правильность ввода даты первой поездки
+        path = "//input[@data-test-name='FirstDepartureDate'][@class=\"form-control width-xs-9rem width-sm-9rem collapsing-in collapsing-out validation-control-has-success\"]";
+        errorPath = "//input[@data-test-name='FirstDepartureDate'][@class=\"form-control width-xs-9rem width-sm-9rem collapsing-in collapsing-out validation-control-has-error\"]";
+        checkInsertedValues(dateOfFirstTrip, path, errorPath);
 
         // Соглашаемся с условиями
         path = "//input[@data-test-name=\"IsProcessingPersonalDataToCalculate\"]";
         scrollDown(driver.findElement(By.xpath(path)));
         checkboxCheck(path, true);
+        System.out.println("----------------------Конец теста----------------------");
     }
 }

@@ -1,10 +1,5 @@
-package aplana.HW5;
-
 import org.junit.*;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
@@ -14,17 +9,22 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.NoSuchElementException;
 import java.util.concurrent.TimeUnit;
 
 public class BaseTest {
     public static WebDriver driver;
 
+
     @BeforeClass
     public static void setUp() {
-        System.out.println("Выберите браузер для теста : 1 - Chrome 2 - Firefox 3 - InternetExplorer");
-        Scanner scanner = new Scanner(System.in);
-        int i = 1;
-        switch (i) {
+        //System.out.println("Выберите браузер для теста : 1 - Chrome 2 - Firefox 3 - InternetExplorer");
+
+        /**
+         * Выбрать браузер для запуска теста (chrome, firefox, ie)
+         */
+        String param = System.getProperty("firefox");
+        switch (Integer.parseInt(param)) {
             case 1:
                 System.setProperty("webdriver.chrome.driver", "drv/chromedriver.exe");
                 driver = new ChromeDriver();
@@ -41,12 +41,13 @@ public class BaseTest {
                 System.err.println("Incorrect value");
         }
         String url = "https://www.rgs.ru/";
-        driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+        driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
         driver.manage().window().maximize();
         driver.get(url);
+        String path;
 
         // Выбираем страхование
-        String path = "//ol/li/a[contains(text(), 'Страхование')]";
+        path = "//ol/li/a[contains(text(), 'Страхование')]";
         checkByXPath(path, "Страхование");
         // Выбираем Путешествия
         path = "//a[@href=\"https://www.rgs.ru/products/private_person/tour/index.wbp\"]";
@@ -54,6 +55,7 @@ public class BaseTest {
         // Выбираем Страхование выезжающих за рубеж
         path = "//a[contains(text(), 'Страхование выезжающих')]";
         checkByXPath(path, "Страхование выезжающих");
+
         // Выбираем рассчитать
         path = "//a[contains(text(), 'Рассчитать')]";
         scrollDown(driver.findElement(By.xpath(path)));
@@ -128,6 +130,7 @@ public class BaseTest {
             element.click();
             element.clear();
             element.sendKeys(insertedValue);
+            element.sendKeys(Keys.ENTER);
             isPresent = driver.findElements(By.xpath(path)).size() > 0;
         }
         System.out.println("Коректно введены данные");
@@ -140,7 +143,7 @@ public class BaseTest {
      * @return веб-элемент
      */
     public static WebElement checkByXPath(String path, String expect) {
-        Wait<WebDriver> wait = new WebDriverWait(driver, 10, 1000);
+        Wait<WebDriver> wait = new WebDriverWait(driver, 30, 1000);
         WebElement element = driver.findElement(By.xpath(path));
 
         try {
@@ -149,6 +152,7 @@ public class BaseTest {
             e.printStackTrace();
             driver.quit();
         }
+
         Assert.assertTrue("Несовпадение. Ожидалось : " + expect, element.getText().contains(expect));
         System.out.println("Искомый текст есть : " + expect);
         element.click();
@@ -182,15 +186,22 @@ public class BaseTest {
      * Создает текущую дату и прибавляет к ней 2 недели
      * @param element путь до элемента
      */
-    public void createDate(WebElement element) {
+    public String createDate(WebElement element) {
         Long date = (new Date().getTime()) + (14 * 24 * 3600 * 1000);
         Date newDate = new Date(date);
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd MM y");
         System.out.println("Дата плюс 2 недели : " + dateFormat.format(newDate));
         String stroke = dateFormat.format(newDate);
         System.out.println(stroke);
-        element.clear();
-        element.sendKeys(stroke);
+        element.sendKeys(Keys.SPACE);
+        element.sendKeys(" ");
+        for (int i = 0; i < stroke.length(); i++){
+            char c = stroke.charAt(i);
+            String s = String.valueOf(c);
+            element.sendKeys(s);
+            System.out.println("input : " + s);
+        }
+        return stroke;
     }
 
     /**
@@ -207,11 +218,22 @@ public class BaseTest {
             }
         } else {
             if (driver.findElement(By.xpath(path)).isSelected()) {
+                System.out.println("Галочки нет, все норм");
+            } else {
                 driver.findElement(By.xpath(path)).click();
                 System.out.println("Убрали галку");
-            } else {
-                System.out.println("Галочки нет, все норм");
             }
+        }
+    }
+
+    public static boolean isElementExistst(String path) {
+        try {
+            driver.findElement(By.xpath(path));
+            System.out.println("Элемент найден!" + path);
+            return true;
+        } catch (NoSuchElementException e) {
+            System.out.println("Элемент не найден" + path);
+            return false;
         }
     }
 }
