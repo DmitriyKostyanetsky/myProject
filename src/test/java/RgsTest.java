@@ -1,10 +1,11 @@
+import aplana.HW7.Init;
+import aplana.HW7.pages.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.openqa.selenium.*;
-import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.support.ui.Select;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -13,10 +14,10 @@ import java.util.Collection;
  * Сценарий теста росгосстраха
  * @author Dmitriy Kostyanetsky
  * @version 1.0
- * @since 18.03.2019
+ * @since 20.03.2019
  */
 @RunWith(Parameterized.class)
-public class RgsTest extends BaseTest {
+public class RgsTest extends ClassTest {
 
     @Parameterized.Parameters
     public static Collection<Object[]> data() {
@@ -83,109 +84,73 @@ public class RgsTest extends BaseTest {
 
     @Test
     public void rgs() {
-        String path;
-        WebElement element;
-
-        /**
-         * Страница с заполнением формы
-         **/
         System.out.println("----------------------Начало теста----------------------");
+
+        CalcOnlinePage calcPage = new CalcOnlinePage();
+
         // Выбираем несколько в течение года
-        scrollDown(driver.findElement(By.xpath(countTrip)));
-        checkByXPath(countTrip, "");
+        calcPage.scrollDown(calcPage.quantityBtn);
+        calcPage.clickOnElement(calcPage.quantityBtn);
 
         // Заполняем поле шенгеном
-        path = "//input[@class=\"form-control-multiple-autocomplete-actual-input tt-input\"]";
-        Boolean isPresent = driver.findElements(By.xpath(path)).isEmpty();
-        if (!isPresent) {
-            checkByXPath(path, "");
-            element = fillField(path, countryName);
-            element.sendKeys(Keys.DOWN, Keys.ENTER);
+        if (!Init.getDriver().findElements(By.xpath("//input[@class=\"form-control-multiple-autocomplete-actual-input tt-input\"]")).isEmpty()) {
+            calcPage.clickOnElement(calcPage.countryField);
+            calcPage.inputInField(calcPage.countryField, countryName);
+            calcPage.countryField.sendKeys(Keys.DOWN);
+            calcPage.countryField.sendKeys(Keys.ENTER);
         }
 
         // Выбираем страну
-        path = "//select[@id='ArrivalCountryList']";
-        element = checkByXPath(path, "");
-        new Select(element).selectByVisibleText(countryElement);
+        calcPage.clickOnElement(calcPage.countryListName);
+        new Select(calcPage.countryListName).selectByVisibleText(countryElement);
 
         // Выбираем дату первой поездки
-        path = "//input[@data-test-name='FirstDepartureDate']";
-        scrollDown(driver.findElement(By.xpath(path)));
-        element = checkByXPath(path, "");
-        String dateOfFirstTrip = createDate(element);
-        element.sendKeys(Keys.ENTER);
+        calcPage.scrollDown(calcPage.firstTripDateField);
+        calcPage.clickOnElement(calcPage.firstTripDateField);
+        calcPage.createDate(calcPage.firstTripDateField);
 
-        // Не более 90 дней
-        checkByXPath(countDays, "Не более");
+        // Не более 30 или 90 дней
+        calcPage.clickOnElement(calcPage.quantityDaysBtn);
 
         // Заполняем ФИО и дату рождения
-        isPresent = driver.findElements(By.xpath("//div[@class=\"pull-left margin-right-ms-0 width-xs-auto width-sm-21rem margin-bottom-ms-2\"]//input[@class=\"form-control validation-control-has-success\" != @disabled][@data-test-name=\"FullName\"]")).isEmpty();
+        boolean isPresent = Init.getDriver().findElements(By.xpath("//div[@class=\"pull-left margin-right-ms-0 width-xs-auto width-sm-21rem margin-bottom-ms-2\"]//input[@class=\"form-control validation-control-has-success\" != @disabled][@data-test-name=\"FullName\"]")).isEmpty();
         if (isPresent) {
-            path = "//div[@data-fi-input-mode=\"combined\"]//div[@class=\"form-group\"]//input[@class=\"form-control\" != @disabled]";
-            element = checkByXPath(path, "");
-            element.click();
-            element.clear();
-            element.sendKeys(fio);
+            calcPage.clickOnElement(calcPage.fioField);
+            calcPage.inputInField(calcPage.fioField, fio);
         } else {
-            element = driver.findElement(By.xpath("//div[@class=\"pull-left margin-right-ms-0 width-xs-auto width-sm-21rem margin-bottom-ms-2\"]//input[@class=\"form-control validation-control-has-success\" != @disabled][@data-test-name=\"FullName\"]"));
-            element.clear();
-            element.click();
-            element.sendKeys(fio);
+            calcPage.clickOnElement(calcPage.fioSuccessField);
+            calcPage.fioSuccessField.clear();
+            calcPage.inputInField(calcPage.fioErrorField, fio);
         }
 
-        isPresent = driver.findElements(By.xpath("//input[@data-test-name=\"BirthDate\"][@class=\"form-control width-xs-9rem width-sm-9rem validation-control-has-success\"]")).isEmpty();
+        isPresent = Init.getDriver().findElements(By.xpath("//input[@data-test-name=\"BirthDate\"][@class=\"form-control width-xs-9rem width-sm-9rem validation-control-has-success\"]")).isEmpty();
         if (isPresent) {
-            path = "//input[@data-test-name=\"BirthDate\"]";
-            element = checkByXPath(path, "");
-            element.click();
-            element.clear();
-            element.sendKeys(birthday);
+            calcPage.clickOnElement(calcPage.dateField);
+            calcPage.inputInField(calcPage.dateField, birthday);
         } else {
-            element = driver.findElement(By.xpath("//input[@data-test-name=\"BirthDate\"][@class=\"form-control width-xs-9rem width-sm-9rem validation-control-has-success\"]"));
-            element.clear();
-            element.click();
-            element.sendKeys(birthday);
+            calcPage.clickOnElement(calcPage.dateSuccessField);
+            calcPage.dateSuccessField.clear();
+            calcPage.inputInField(calcPage.dateErrorField, birthday);
         }
 
-        // Выбираем активный отдых
-        if (!driver.findElements(By.xpath("//*[contains(text(), 'активный отдых или спорт')]/ancestor::div[@class=\"calc-vzr-toggle-risk-group\"]//div[@class=\"toggle off toggle-rgs\"]")).isEmpty()) {
-            element = driver.findElement(By.xpath("//*[contains(text(), 'активный отдых или спорт')]/ancestor::div[@class=\"calc-vzr-toggle-risk-group\"]//div[@class=\"toggle off toggle-rgs\"]"));
-            element.click();
-            path = "//div[@class=\"toggle toggle-rgs\"]";
-            element = driver.findElement(By.xpath(path));
-            new WebDriverWait(driver, 10, 1000).until(ExpectedConditions.elementToBeClickable(element));
-            element.click();
+        // Выбираем активный или не активный отдых
+        if (!Init.getDriver().findElements(By.xpath("//*[contains(text(), 'активный отдых или спорт')]/ancestor::div[@class=\"calc-vzr-toggle-risk-group\"]//div[@class=\"toggle off toggle-rgs\"]")).isEmpty()) {
+            calcPage.clickOnElement(calcPage.activeCheckBox);
+            calcPage.clickOnElement(calcPage.activeOnCheckBox);
         }
-
         if (isActive) {
-            path = "//div[@class=\"toggle toggle-rgs off\"]";
-            isElementExistst(path);
-            checkboxCheck(path, isActive);
+            calcPage.checkboxCheck(calcPage.activeOffCheckBox, isActive);
         } else {
-            path = "//div[@class=\"toggle toggle-rgs\"]";
-            isElementExistst(path);
-            checkboxCheck(path, isActive);
+            calcPage.checkboxCheck(calcPage.activeOnCheckBox, isActive);
         }
 
-        // Проверяем правильность ввода ФИО
-        path = "//div[@class=\"pull-left margin-right-ms-0 width-xs-auto width-sm-21rem margin-bottom-ms-2\"]//input[@class=\"form-control validation-control-has-success\" != @disabled][@data-test-name=\"FullName\"]";
-        String errorPath = "//div[@class=\"pull-left margin-right-ms-0 width-xs-auto width-sm-21rem margin-bottom-ms-2\"]//input[@class=\"form-control validation-control-has-error\" != @disabled][@data-test-name=\"FullName\"]";
-        checkInsertedValues(fio, path, errorPath);
-
-        // Проверяем правильность ввода даты
-        path = "//input[@data-test-name=\"BirthDate\"][@class=\"form-control width-xs-9rem width-sm-9rem validation-control-has-success\"]";
-        errorPath = "//input[@data-test-name=\"BirthDate\"][@class=\"form-control width-xs-9rem width-sm-9rem validation-control-has-error\"]";
-        checkInsertedValues(birthday, path, errorPath);
-
-        // Проверяем правильность ввода даты первой поездки
-        path = "//input[@data-test-name='FirstDepartureDate'][@class=\"form-control width-xs-9rem width-sm-9rem collapsing-in collapsing-out validation-control-has-success\"]";
-        errorPath = "//input[@data-test-name='FirstDepartureDate'][@class=\"form-control width-xs-9rem width-sm-9rem collapsing-in collapsing-out validation-control-has-error\"]";
-        checkInsertedValues(dateOfFirstTrip, path, errorPath);
+        // Проверяем правильность ввода ФИО и даты рождения
+        calcPage.checkInsertedValues(fio, calcPage.fioSuccessField, calcPage.fioErrorField);
+        calcPage.checkInsertedValues(birthday, calcPage.dateSuccessField, calcPage.dateErrorField);
 
         // Соглашаемся с условиями
-        path = "//input[@data-test-name=\"IsProcessingPersonalDataToCalculate\"]";
-        scrollDown(driver.findElement(By.xpath(path)));
-        checkboxCheck(path, true);
+        calcPage.scrollDown(calcPage.conditionCheckBox);
+        calcPage.checkboxCheck(calcPage.conditionCheckBox, true);
         System.out.println("----------------------Конец теста----------------------");
     }
 }
