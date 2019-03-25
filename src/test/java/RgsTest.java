@@ -1,5 +1,6 @@
 import aplana.HW7.Init;
 import aplana.HW7.pages.*;
+import cucumber.api.java.ru.Когда;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -18,6 +19,9 @@ import java.util.Collection;
  */
 @RunWith(Parameterized.class)
 public class RgsTest extends ClassTest {
+
+    private CalcOnlinePage calcPage = new CalcOnlinePage();
+    private boolean isPresent;
 
     @Parameterized.Parameters
     public static Collection<Object[]> data() {
@@ -85,35 +89,51 @@ public class RgsTest extends ClassTest {
     @Test
     public void rgs() {
         System.out.println("----------------------Начало теста----------------------");
+        System.out.println("----------------------Конец теста----------------------");
+    }
 
-        CalcOnlinePage calcPage = new CalcOnlinePage();
+    @Когда("загружена страница Калькулятор страхования путешественников онлайн")
+    public void loadPage() {
+        System.out.println("Нужная страница");
+    }
 
-        // Выбираем несколько в течение года
+    @Когда("выбираем сколько поездок за рубеж")
+    public void chooseTravelCount() {
         calcPage.scrollDown(calcPage.quantityBtn);
         calcPage.clickOnElement(calcPage.quantityBtn);
+    }
 
-        // Заполняем поле шенгеном
+    @Когда("выбираем куда едем")
+    public void whereTravel() {
         if (!Init.getDriver().findElements(By.xpath("//input[@class=\"form-control-multiple-autocomplete-actual-input tt-input\"]")).isEmpty()) {
             calcPage.clickOnElement(calcPage.countryField);
             calcPage.inputInField(calcPage.countryField, countryName);
             calcPage.countryField.sendKeys(Keys.DOWN);
             calcPage.countryField.sendKeys(Keys.ENTER);
         }
+    }
 
-        // Выбираем страну
+    @Когда("выбираем страну")
+    public void chooseCountry() {
         calcPage.clickOnElement(calcPage.countryListName);
         new Select(calcPage.countryListName).selectByVisibleText(countryElement);
+    }
 
-        // Выбираем дату первой поездки
+    @Когда("указываем дату первой поездки")
+    public void firstTravelDate() {
         calcPage.scrollDown(calcPage.firstTripDateField);
         calcPage.clickOnElement(calcPage.firstTripDateField);
         calcPage.createDate(calcPage.firstTripDateField);
+    }
 
-        // Не более 30 или 90 дней
+    @Когда("выбираем количество дней за рубежом")
+    public void chooseTravelDays() {
         calcPage.clickOnElement(calcPage.quantityDaysBtn);
+    }
 
-        // Заполняем ФИО и дату рождения
-        boolean isPresent = Init.getDriver().findElements(By.xpath("//div[@class=\"pull-left margin-right-ms-0 width-xs-auto width-sm-21rem margin-bottom-ms-2\"]//input[@class=\"form-control validation-control-has-success\" != @disabled][@data-test-name=\"FullName\"]")).isEmpty();
+    @Когда("заполняем ФИО")
+    public void fillFio() {
+        isPresent = Init.getDriver().findElements(By.xpath("//div[@class=\"pull-left margin-right-ms-0 width-xs-auto width-sm-21rem margin-bottom-ms-2\"]//input[@class=\"form-control validation-control-has-success\" != @disabled][@data-test-name=\"FullName\"]")).isEmpty();
         if (isPresent) {
             calcPage.clickOnElement(calcPage.fioField);
             calcPage.inputInField(calcPage.fioField, fio);
@@ -122,7 +142,10 @@ public class RgsTest extends ClassTest {
             calcPage.fioSuccessField.clear();
             calcPage.inputInField(calcPage.fioErrorField, fio);
         }
+    }
 
+    @Когда("заполняем дату рождения")
+    public void fillBirthday() {
         isPresent = Init.getDriver().findElements(By.xpath("//input[@data-test-name=\"BirthDate\"][@class=\"form-control width-xs-9rem width-sm-9rem validation-control-has-success\"]")).isEmpty();
         if (isPresent) {
             calcPage.clickOnElement(calcPage.dateField);
@@ -132,8 +155,10 @@ public class RgsTest extends ClassTest {
             calcPage.dateSuccessField.clear();
             calcPage.inputInField(calcPage.dateErrorField, birthday);
         }
+    }
 
-        // Выбираем активный или не активный отдых
+    @Когда("выбираем активный отдых")
+    public void activeRelax() {
         if (!Init.getDriver().findElements(By.xpath("//*[contains(text(), 'активный отдых или спорт')]/ancestor::div[@class=\"calc-vzr-toggle-risk-group\"]//div[@class=\"toggle off toggle-rgs\"]")).isEmpty()) {
             calcPage.clickOnElement(calcPage.activeCheckBox);
             calcPage.clickOnElement(calcPage.activeOnCheckBox);
@@ -143,14 +168,21 @@ public class RgsTest extends ClassTest {
         } else {
             calcPage.checkboxCheck(calcPage.activeOnCheckBox, isActive);
         }
+    }
 
-        // Проверяем правильность ввода ФИО и даты рождения
-        calcPage.checkInsertedValues(fio, calcPage.fioSuccessField, calcPage.fioErrorField);
-        calcPage.checkInsertedValues(birthday, calcPage.dateSuccessField, calcPage.dateErrorField);
+    @Когда("проверяем корректность ФИО")
+    public void checkCorrectFio() {
+        calcPage.checkInsertedValues(fio, calcPage.fioField);
+    }
 
-        // Соглашаемся с условиями
+    @Когда("проверяем корректность даты рождения")
+    public void checkCorrectBirthday() {
+        calcPage.checkInsertedValues(birthday, calcPage.dateField);
+    }
+
+    @Когда("соглашаемся с условиями")
+    public void conditionTrue() {
         calcPage.scrollDown(calcPage.conditionCheckBox);
         calcPage.checkboxCheck(calcPage.conditionCheckBox, true);
-        System.out.println("----------------------Конец теста----------------------");
     }
 }
