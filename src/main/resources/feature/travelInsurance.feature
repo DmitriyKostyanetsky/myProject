@@ -22,5 +22,5 @@
       Примеры:
         |param |countryName|fio           |birthday  |active|
         |Шенген|Испания    |MATIUS DERZKI |11.11.1998|yes   |
-        |Шенген|Италия     |LEBREST BOROV |12.12.1977|no    |
+        |Шенген|Италия     |LEBREST BOROV |12.12.1977|yes   |
         |Шенген|Дания      |BENJAMIN BOCK |02.07.2000|yes   |
