@@ -1,5 +1,7 @@
 package aplana.HW7.pages;
 
+import aplana.HW7.Init;
+import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -53,7 +55,7 @@ public class CalcOnlinePage extends BasePage {
     /**
      * Поле ФИО
      */
-    @FindBy(xpath = "//div[@data-fi-input-mode=\"combined\"]//div[@class=\"form-group\"]//input[@class=\"form-control\" != @disabled]")
+    @FindBy(xpath = "//input[contains(@class,'form-control')][@data-test-name='FullName']")
     public WebElement fioField;
 
     /**
@@ -176,16 +178,17 @@ public class CalcOnlinePage extends BasePage {
     /**
      * Проверяет правильность ввода данных. Вводит до тех пор пока данные не введутся коректно
      * @param insertedValue значение которое было введено
-     * @param sucElement ожидаемый xpath
      * @param errElement xpath с ошибочными данными
      */
-    public void checkInsertedValues(String insertedValue, WebElement sucElement, WebElement errElement) {
-        while (sucElement == null) {
+    public void checkInsertedValues(String insertedValue, WebElement errElement) {
+        boolean isSuccess = false;
+        while (!isSuccess) {
             System.out.println("НЕ коректно введены данные");
             errElement.click();
             errElement.clear();
             errElement.sendKeys(insertedValue);
             errElement.sendKeys(Keys.ENTER);
+            isSuccess = true;
         }
         System.out.println("Коректно введены данные");
     }

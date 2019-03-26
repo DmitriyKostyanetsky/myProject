@@ -1,3 +1,4 @@
+/*
 package ru.dmitriyK.servlets;
 
 import javax.servlet.ServletException;
@@ -40,4 +41,4 @@ public class HelloServlet extends HttpServlet {
         }
         out.close();
     }
-}
+}*/

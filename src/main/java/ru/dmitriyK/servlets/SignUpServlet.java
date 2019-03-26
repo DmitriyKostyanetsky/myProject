@@ -1,3 +1,4 @@
+/*
 package ru.dmitriyK.servlets;
 
 import javax.servlet.ServletException;
@@ -16,3 +17,4 @@ public class SignUpServlet extends HttpServlet {
         writer.write("FIX!");
     }
 }
+*/

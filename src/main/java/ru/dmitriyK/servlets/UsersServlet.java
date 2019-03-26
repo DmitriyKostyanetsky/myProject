@@ -1,3 +1,4 @@
+/*
 package ru.dmitriyK.servlets;
 
 import javax.servlet.ServletException;
@@ -40,4 +41,4 @@ public class UsersServlet extends HttpServlet {
         // перенаправление на страницу add user
         req.getServletContext().getRequestDispatcher("/WEB-INF/register.jsp").forward(req, resp);
     }
-}
+}*/
